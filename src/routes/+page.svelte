@@ -27,7 +27,11 @@
         formData.append("image_file", uploadedFile);
 
         try {
-            const response = await fetch("http://127.0.0.1:8000/colorize", {
+            const backendBaseUrl = import.meta.env.VITE_BACKEND_URL;
+        
+            const apiUrl = `${backendBaseUrl}/colorize`;
+            console.log("Sending request to:", apiUrl);
+            const response = await fetch(apiUrl, {
                 method: "POST",
                 body: formData,
             });
