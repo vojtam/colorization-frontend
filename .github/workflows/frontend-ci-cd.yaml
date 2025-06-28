@@ -3,6 +3,8 @@ name: Frontend CI/CD
 on:
   push:
     branches: [ "main" ]
+    tags:
+      - 'v*.*.*' # Also trigger on version tags like v1.2.3
 
 jobs:
   build-and-push:
@@ -12,6 +14,19 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Docker meta actions
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKER_REGISTRY }}/{{ secrets.DOCKER_USERNAME }}/cgan-frontend
+          tags: |
+            type=sha,prefix=,format=short
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+
+            type=raw,value=latest,enable={{is_default_branch}}
+
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -30,4 +45,5 @@ jobs:
           context: ./
           file: ./Dockerfile
           push: true
-          tags: ${{ secrets.DOCKER_REGISTRY }}/vojtama/cgan-frontend:${{ github.sha }} # Tag with the unique git commit SHA
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels}}
