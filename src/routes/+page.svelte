@@ -54,7 +54,7 @@
 
 </script>
 
-<main class="w-screen bg-blue-100 h-screen flex flex-col  items-center">
+<main class="w-screen h-screen flex flex-col  items-center">
     <div class="text-center font-display h-[25%] p-8 flex items-center justify-end flex-col">
         <h1 class="text-5xl  font-bold mb-4">Image Colorizer</h1>
         <p class="text-2xl">Add color to old family photos and historic images</p>
