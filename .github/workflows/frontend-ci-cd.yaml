@@ -19,7 +19,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.DOCKER_REGISTRY }}/{{ secrets.DOCKER_USERNAME }}/cgan-frontend
+          images: ${{ secrets.DOCKER_REGISTRY }}/${{ secrets.DOCKER_USERNAME }}/cgan-frontend
           tags: |
             type=sha,prefix=,format=short
             type=semver,pattern={{version}}
