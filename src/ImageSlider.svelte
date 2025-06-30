@@ -20,23 +20,38 @@
 		sliderPercent = Math.min(Math.max(percent, 0), 100);
 	}
 
+	function handleInteractionStart(e: MouseEvent | TouchEvent) {
+		e.preventDefault();
+		sliderRect = sliderElement?.getBoundingClientRect();
+		
+		const pageX = 'touches' in e ? e.touches[0].pageX : e.pageX;
+		
+		setSliderPercent(pageX);
+		dragging = true;
+	}
 
 	$effect(() => {
 		if (dragging) {
-			const handleMousemove = (e: MouseEvent) => {
-				setSliderPercent(e.pageX);
+			const handleMove = (e: MouseEvent | TouchEvent) => {
+				if (e.cancelable) e.preventDefault();
+				const pageX = 'touches' in e ? e.touches[0].pageX : e.pageX;
+				setSliderPercent(pageX);
 			};
 
-			const handleMouseup = () => {
+			const handleEnd = () => {
 				dragging = false;
 			};
 
-			document.addEventListener('mousemove', handleMousemove);
-			document.addEventListener('mouseup', handleMouseup);
+			document.addEventListener('mousemove', handleMove);
+			document.addEventListener('touchmove', handleMove, { passive: false }); // {passive: false} is important for preventDefault
+			document.addEventListener('mouseup', handleEnd);
+			document.addEventListener('touchend', handleEnd);
 
 			return () => {
-				document.removeEventListener('mousemove', handleMousemove);
-				document.removeEventListener('mouseup', handleMouseup);
+				document.removeEventListener('mousemove', handleMove);
+				document.removeEventListener('touchmove', handleMove);
+				document.removeEventListener('mouseup', handleEnd);
+				document.removeEventListener('touchend', handleEnd);
 			};
 		}
 	});
@@ -68,16 +83,14 @@
             </div>
         </div>
 
-        <div
-            class="invisibleCover"
-            style:cursor={dragging ? 'ew-resize' : 'pointer'}
-            onmousedown={(e) => {
-                e.preventDefault();
-                sliderRect = sliderElement?.getBoundingClientRect();
-                setSliderPercent(e.pageX);
-                dragging = true;
-            }}
-        ></div>
+
+
+		<div
+			class="invisibleCover"
+			style:cursor={dragging ? 'ew-resize' : 'pointer'}
+			onmousedown={handleInteractionStart}
+			ontouchstart={handleInteractionStart}
+		></div>
     {/if}
 
 
