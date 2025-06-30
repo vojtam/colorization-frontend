@@ -2,7 +2,7 @@
     import ImgUpload from "../img_upload.svelte";
     import ImageSlider from "../ImageSlider.svelte";
     import ShowImg from "../show_img.svelte";
-    import { Loader2, Download, Copy } from 'lucide-svelte';
+    import { Loader2, Download, Copy, Palette } from 'lucide-svelte';
     import { Button } from "$lib/components/ui/button/index.js";
     
     let isImageUploaded = false;
@@ -86,7 +86,10 @@
     <div class="flex flex-col md:flex-row justify-center w-[50%] gap-4 items-center">
         <ImgUpload bind:showImage={isImageUploaded} bind:file={uploadedFile} bind:imageSrc={uploadedImageSrc} />
         {#if isImageUploaded}
-            <Button disabled={isLoading} onclick={handleColorize} class="text-2xl pt-11 pb-12 px-13 cursor-pointer" variant="default">Colorize!</Button>
+            <Button disabled={isLoading} onclick={handleColorize} class="text-xl font-semibold  w-44 py-8 px-13 flex flex-col justify-center items-center cursor-pointer" variant="default">
+                <span>Colorize</span>
+                <!-- <Palette  class="w-24 h-24"/> -->
+            </Button>
         {/if}
 
     </div>
