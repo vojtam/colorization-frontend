@@ -2,7 +2,7 @@
     let { imageSrc, emptyCaption } = $props<{ imageSrc: string | null, emptyCaption: string | null }>();
 </script>
 
-<div class="w-full h-full min-h-[250px] flex justify-center items-center rounded-md border-1 border-gray-300 p-4">
+<div class="w-full h-full min-h-[250px] flex justify-center items-center rounded-md p-4">
     {#if imageSrc}
 		<img
 			src={imageSrc}

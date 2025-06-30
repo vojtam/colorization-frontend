@@ -35,7 +35,7 @@
     }
 </script>
 
-<div class="flex flex-col w-full p-8 items-center gap-2 mb-4">
+<div class="flex flex-col items-center gap-2">
 	<input
 		type="file"
 		accept="image/*"
@@ -47,12 +47,12 @@
 
 	<label
 		for="file-upload"
-		class="cursor-pointer w-full max-w-[20%] h-[150px] flex justify-center flex-col text-xl items-center rounded-md bg-blue-600 hover:bg-indigo-600 px-3.5 py-2.5 font-semibold text-white shadow-sm focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"
+		class="cursor-pointer p-3 text-center flex justify-center flex-col text-xl items-center rounded-md bg-blue-600 hover:bg-indigo-600  font-semibold text-white shadow-sm focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"
 	>   
-		<span>Upload an image</span>
-        <FileImage />
+		<span class="p-2">Upload an image</span>
+        <FileImage class="" />
 	</label>
 
-	<p class="text-sm text-gray-500">{filename}</p>
+	<!-- <p class="text-sm text-gray-500">{filename}</p> -->
 </div>
 

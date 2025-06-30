@@ -1,7 +1,8 @@
 <script lang="ts">
     import ImgUpload from "../img_upload.svelte";
+    import ImageSlider from "../ImageSlider.svelte";
     import ShowImg from "../show_img.svelte";
-    import { Loader2 } from "lucide-svelte";
+    import { Loader2, Download, Copy } from 'lucide-svelte';
     import { Button } from "$lib/components/ui/button/index.js";
     
     let isImageUploaded = false;
@@ -10,8 +11,10 @@
     let uploadedImageSrc: string | null = null;
 
     let colorizedImageUrl: string | null = null;
+    let colorizedImageBlob: Blob | null = null; 
     let isLoading = false;
     let errorMessage = "";
+    let copyButtonText = 'Copy Image';
 
     async function handleColorize() {
         if (!uploadedFile) {
@@ -29,7 +32,7 @@
         try {
             const backendBaseUrl = import.meta.env.VITE_BACKEND_URL;
         
-            const apiUrl = `${backendBaseUrl}/colorize`;
+            const apiUrl = `${backendBaseUrl}/api/colorize`;
             console.log("Sending request to:", apiUrl);
             const response = await fetch(apiUrl, {
                 method: "POST",
@@ -41,7 +44,8 @@
                 throw new Error(`API Error: ${response.status} ${response.statusText}. ${errorData.detail}`);
             }
             const imageBlob = await response.blob();
-            
+
+			colorizedImageBlob = imageBlob;
             colorizedImageUrl = URL.createObjectURL(imageBlob);
 
         } catch (error: any) {
@@ -52,38 +56,106 @@
         }
     }
 
+    async function copyImageToClipboard() {
+		if (!colorizedImageBlob) return;
+
+		try {
+			const item = new ClipboardItem({ [colorizedImageBlob.type]: colorizedImageBlob });
+			await navigator.clipboard.write([item]);
+
+			copyButtonText = 'Copied!';
+			setTimeout(() => {
+				copyButtonText = 'Copy Image';
+			}, 2000);
+		} catch (error) {
+			console.error('Failed to copy image:', error);
+			copyButtonText = 'Failed to copy';
+            setTimeout(() => {
+				copyButtonText = 'Copy Image';
+			}, 2000);
+		}
+	}
+
 </script>
 
-<main class="w-screen h-screen flex flex-col  items-center">
-    <div class="text-center font-display h-[25%] p-8 flex items-center justify-end flex-col">
+<main class="w-screen h-screen gap-12 flex flex-col  items-center">
+    <div class="text-center pt-4 font-display h-[25%] flex items-center justify-end flex-col">
         <h1 class="text-5xl  font-bold mb-4">Image Colorizer</h1>
         <p class="text-2xl">Add color to old family photos and historic images</p>
     </div>
-    <ImgUpload bind:showImage={isImageUploaded} bind:file={uploadedFile} bind:imageSrc={uploadedImageSrc} />
-    <div class="w-[80%] max-w-4xl grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-        <div class="w-full">
-            <h2 class="text-2xl font-semibold text-center mb-4">1. Upload Image</h2>
-            <ShowImg imageSrc={uploadedImageSrc} emptyCaption="Your original image will appear here"/>
-        </div>
-        <div class="w-full">
-            <h2 class="text-2xl font-semibold text-center mb-4">2. View Result</h2>
-            <div class="w-full h-full min-h-[250px] flex justify-center items-center">
-                {#if isLoading}
-                    <div class="flex flex-col items-center gap-4 text-gray-500">
-                        <Loader2 class="animate-spin" size={48} />
-                        <span>Colorizing, please wait...</span>
-                    </div>
-                {:else if errorMessage}
-                     <p class="text-red-500 text-center">{errorMessage}</p>
-                {:else}
-                    <ShowImg imageSrc={colorizedImageUrl} emptyCaption="Your colorized image will appear here"/>
-                {/if}
-            </div>
-        </div>
+    <div class="flex flex-col md:flex-row justify-center w-[50%] gap-4 items-center">
+        <ImgUpload bind:showImage={isImageUploaded} bind:file={uploadedFile} bind:imageSrc={uploadedImageSrc} />
+        {#if isImageUploaded}
+            <Button disabled={isLoading} onclick={handleColorize} class="text-2xl pt-11 pb-12 px-13 cursor-pointer" variant="default">Colorize!</Button>
+        {/if}
+
     </div>
-    {#if isImageUploaded}
-        <div class="flex p-8 items-center justify-center">
-            <Button disabled={isLoading} onclick={handleColorize} class="text-2xl p-12 cursor-pointer" variant="default">Colorize!</Button>
+
+    {#if isLoading}
+        <div class="flex items-center justify-center w-full h-[200px]">
+            <Loader2 class="animate-spin text-blue-600" size={48} />
+        </div>
+    {:else if errorMessage}
+        <div class="text-red-500 text-xl p-4">{errorMessage}</div>
+    {/if}
+
+    {#if isImageUploaded && !colorizedImageUrl}
+        <div class="flex items-center justify-center w-full h-[500px] ">
+            <ShowImg emptyCaption="upload a grayscale image" imageSrc={uploadedImageSrc || ""} />
         </div>
     {/if}
+
+    {#if isImageUploaded && colorizedImageUrl}
+        <div class="w-[50%] h-[400px] shrink-0"> 
+            <ImageSlider
+                src1={uploadedImageSrc || ""}
+                src2={colorizedImageUrl || ""}
+                caption1="Original Image"
+                caption2="Colorized Image"/>
+
+        </div>
+
+        <div class="flex gap-4">
+                    <a
+                        href={colorizedImageUrl}
+                        download="colorized-image.png"
+                        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
+                    >
+                        <Download class="w-4 h-4 mr-2" />
+                        Download Image
+                    </a>
+                    <Button variant="outline" class="cursor-pointer" onclick={copyImageToClipboard}>
+                        <Copy class="w-4 h-4 mr-2" />
+                        {copyButtonText}
+                    </Button>
+        </div>
+    {/if} 
+
+
+    <div class="grid px-8 pb-4 lg:grid-cols-3 gap-8  items-start w-full">
+        <div class="h-[350px]">
+            <ImageSlider
+                src1={"birb_2.png"}
+                src2={"color_birb_2.png"}
+                caption1="Original Image"
+                caption2="Colorized Image"/> 
+
+        </div>
+        <div class="h-[350px]">
+            <ImageSlider
+            src1={"prague.png"}
+            src2={"color_prague.png"}
+            caption1="Original Image"
+            caption2="Colorized Image"/>
+
+        </div>
+        <div class="h-[350px]">
+            <ImageSlider
+            src1={"pipik.png"}
+            src2={"color_pipik.png"}
+            caption1="Original Image"
+            caption2="Colorized Image"/>
+        </div>
+
+    </div>
 </main>
