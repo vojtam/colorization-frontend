@@ -30,10 +30,10 @@
         formData.append("image_file", uploadedFile);
 
         try {
-            // const backendBaseUrl = import.meta.env.VITE_BACKEND_URL;
+            const backendBaseUrl = import.meta.env.VITE_BACKEND_URL;
         
-            // const apiUrl = `${backendBaseUrl}/api/colorize`;
-            const apiUrl = 'api/colorize';
+            const apiUrl = `${backendBaseUrl}/api/colorize`;
+            // const apiUrl = 'api/colorize';
             console.log("Sending request to:", apiUrl);
             const response = await fetch(apiUrl, {
                 method: "POST",
@@ -79,6 +79,13 @@
 
 </script>
 
+<svelte:head>
+    <title>Image Colorizer</title>
+    <meta name="description" content="Add color to old family photos and historic images using our AI-powered image colorization tool." />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/favicon.ico" />
+</svelte:head>
+
 <main class="w-screen h-screen gap-12 flex flex-col  items-center">
     <div class="text-center pt-4 font-display h-[25%] flex items-center justify-end flex-col">
         <h1 class="text-5xl  font-bold mb-4">Image Colorizer</h1>
@@ -110,12 +117,15 @@
     {/if}
 
     {#if isImageUploaded && colorizedImageUrl}
-        <div class="w-[50%] h-[400px] shrink-0"> 
+        <div class="w-[90%] md:w-[50%] h-[500px] shrink-0"> 
             <ImageSlider
                 src1={uploadedImageSrc || ""}
                 src2={colorizedImageUrl || ""}
                 caption1="Original Image"
-                caption2="Colorized Image"/>
+                caption2="Colorized Image"
+                fit="contain"
+                
+                />
 
         </div>
 
@@ -142,7 +152,8 @@
                 src1={"birb_2.png"}
                 src2={"color_birb_2.png"}
                 caption1="Original Image"
-                caption2="Colorized Image"/> 
+                caption2="Colorized Image"
+                fit="cover"/> 
 
         </div>
         <div class="h-[350px]">
@@ -150,7 +161,8 @@
             src1={"prague.png"}
             src2={"color_prague.png"}
             caption1="Original Image"
-            caption2="Colorized Image"/>
+            caption2="Colorized Image"
+            fit="cover"/>
 
         </div>
         <div class="h-[350px]">
@@ -158,7 +170,8 @@
             src1={"pipik.png"}
             src2={"color_pipik.png"}
             caption1="Original Image"
-            caption2="Colorized Image"/>
+            caption2="Colorized Image"
+            fit="cover"/>
         </div>
 
     </div>

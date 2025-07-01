@@ -5,8 +5,9 @@
 		src1,
 		src2,
 		caption1,
-		caption2
-	}: { src1: string; src2: string; caption1?: string; caption2?: string } = $props();
+		caption2,
+		fit = "cover"
+	}: { src1: string; src2: string; caption1?: string; caption2?: string; fit: string } = $props();
 
 	let sliderPercent = $state(50);
 	let dragging = $state(false);
@@ -57,16 +58,17 @@
 	});
 </script>
 
+
 <div class="imageSlider" bind:this={sliderElement}>
     {#if src2}
 	<div class="imageWrapper">
-		<img src={src1} alt="before" draggable="false" />
+		<img src={src1} alt="before" draggable="false" style="object-fit: {fit};" />
 	</div>
 	<div
 		class="imageWrapper afterImage"
 		style:clip-path="inset(0 0 0 {sliderPercent}%)"
 	>
-		<img src={src2} alt="after" draggable="false" />
+		<img src={src2} alt="after" draggable="false" style="object-fit: {fit};" />
 	</div>
 
     <div class="sliderHandle" style:left="{sliderPercent}%">
@@ -97,7 +99,6 @@
 	{#if caption1}<span class="imageLabel" style:left="0">{caption1}</span>{/if}
 
     {#if caption2 && src2}
-		<!-- Also make the second caption conditional -->
 		<span class="imageLabel" style:right="0">{caption2}</span>
 	{/if}
 
@@ -128,8 +129,6 @@
 		display: block;
 		width: 100%;
         height: 100%;
-        object-fit: cover;
-		user-select: none;
 		/* -moz-user-select: none;
 		-webkit-user-select: none;
 		-webkit-user-drag: none; */
