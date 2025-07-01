@@ -30,10 +30,10 @@
         formData.append("image_file", uploadedFile);
 
         try {
-            const backendBaseUrl = import.meta.env.VITE_BACKEND_URL;
+            // const backendBaseUrl = import.meta.env.VITE_BACKEND_URL;
         
-            const apiUrl = `${backendBaseUrl}/api/colorize`;
-            // const apiUrl = 'api/colorize';
+            // const apiUrl = `${backendBaseUrl}/api/colorize`;
+            const apiUrl = 'api/colorize';
             console.log("Sending request to:", apiUrl);
             const response = await fetch(apiUrl, {
                 method: "POST",
