@@ -1,6 +1,5 @@
 
 # Image Colorization with Neural Networks - SvelteKit Frontend
-# ==================================================================================================
 
 > A deep learning application that colorizes grayscale images, deployed on Kubernetes with a full CI/CD pipeline.
 
